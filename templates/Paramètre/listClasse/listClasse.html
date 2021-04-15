@@ -1,0 +1,373 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}
+    ListClasse | GesNote
+{% endblock %}
+
+
+{% block content %}
+    <!-- ============================================================== -->
+    <!-- pageheader -->
+    <!-- ============================================================== -->
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="page-header">
+                <h2 class="pageheader-title">Liste des classes </h2>
+                <div class="page-breadcrumb">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'accueil' %}" class="breadcrumb-link">Accueil</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">ListClasse</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- end pageheader -->
+    <!-- ============================================================== -->
+    <div class="row">
+        
+        <!-- ============================================================== -->
+        <!-- striped table -->
+        <!-- ============================================================== -->
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            
+            {% if msg %}
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
+                <div class="alert dark alert-alt alert-success alert-dismissible" id="success-alert" role="alert">
+                    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">×</span></button>
+                    <strong><i class="icon wb-check" aria-hidden="true"></i> Success! </strong> {{ msg }}
+                </div>
+            </div>
+            {% endif %}
+            {% if error %}
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
+                <div class="alert alert-danger" id="success-alert">
+                    <button type="button" class="close" data-dismiss="alert">x</button>
+                    <strong>Erreur! </strong> {{error}}
+                </div>
+            </div>
+            {% endif %}
+            <div class="card">
+                <h5 class="card-header">Liste des classes</h5>
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col">code</th>
+                                <th scope="col">libelle</th>
+                                <th scope="col">Cycle</th>
+                                <th scope="col">Titulaire</th>
+                                <th scope="col">Modules</th>
+                                <th scope="col">actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for classe in listClasse %}
+                                <tr>
+                                    <td>{{ classe.codeClasse }}</td>
+                                    <td>{{ classe.libelle_classe }}</td>
+                                    <td>
+                                        {% if classe.niveau_classe == "1" %}
+                                            1er Cycle
+                                        {% elif classe.niveau_classe == "2" %}
+                                            2ème Cycle
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ classe.prof_titulaire.professeurUser.nom }}</td>
+                                    <td>
+                                        
+                                        {% for module in classe.module.all %}
+                                            <span class="badge badge-primary"> {{ module.codeModule.capitalize }}</span>
+                                        {% empty %}
+                                            <span class="badge badge-warning"> Pas de module</span>
+                                        {% endfor %}
+                                            
+                                    </td>
+                                    <td>
+                                        <a data-placement="top" data-toggle="modal"
+                                            data-target="#exampleModalCenterModifier{{ classe.id }}" title="Modifier la classe"
+                                            href="#" class="card-link">
+                                            <i data-content="Cette opération vous permet de modifier les informations d'une classe"
+                                                data-trigger="hover" data-toggle="popover"
+                                                data-original-title="Modifier la classe" tabindex="0" title=""
+                                                class="fa fa-edit text-warning "></i>
+                                        </a>
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="exampleModalCenterModifier{{ classe.id }}" tabindex="-1"
+                                            role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLongTitle">Modifier une classe
+                                                        </h5>
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                            aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form action="{% url 'updateClasse' %}" method="POST">
+                                                            {% csrf_token %}
+                                                            <input type="hidden" name="idUser" value="{{ classe.id }}">
+                                                            <input type="hidden" name="id" value="{{ classe.id }}">
+                                                            <div class="form-group row">
+                                                                <label for="codeClasse" class="col-3 col-lg-2 col-form-label text-right">code<span
+                                                                        class="required text-danger">*</span></label>
+                                                                <div class="col-9 col-lg-10">
+                                                                    <input type="text" name="codeClasse" id="codeClasse" placeholder="code de la classe"
+                                                                        {% if codeClasse %}
+                                                                            value="{{ codeClasse }}"
+                                                                        {% else %}
+                                                                            value="{{ classe.codeClasse }}"
+                                                                        {% endif %}
+                                                                        class="form-control" required>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <label for="libelle_classe" class="col-3 col-lg-2 col-form-label text-right">libelle</label>
+                                                                <div class="col-9 col-lg-10">
+                                                                    <input type="text" name="libelle_classe" id="libelle_classe" placeholder="libelle de la classe"
+                                                                    {% if libelle_classe %}
+                                                                        value="{{ libelle_classe }}"
+                                                                    {% else %}
+                                                                        value="{{ classe.libelle_classe }}"
+                                                                    {% endif %}
+                                                                    class="form-control" required>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <label class="col-3 col-lg-2 col-form-label  text-right" for="prof_titulaire">Prof titulaire
+                                                                </label>
+                                                                <div class="col-9 col-lg-10">
+                                                                    <select name="prof_titulaire" id="prof_titulaire" class="form-control">
+                                                                        {% for professeur in listProfesseur %}
+                                                                            <option value=" {{professeur.id}}" 
+                                                                            {% if professeur.id in classe.prof_titulaire.id %}
+                                                                                selected
+                                                                            {% endif %}
+                                                                             >{{professeur.professeurUser.nom}}
+                                                                            </option>
+                                                                        {% empty %}
+                                                                            <option disabled> Pas de professeur</option>
+                                                                        {% endfor %}
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <label for="niveau_classe" class="col-3 col-lg-2 col-form-label text-right">Cycle<span
+                                                                        class="required text-danger">*</span></label>
+                                                                <div class="col-9 col-lg-10">
+                                                                    <select name="niveau_classe" id="niveau_classe" placeholder="niveau_classe de la classe"
+                                                                    class="form-control" required>
+                                                                        <option value="1"
+                                                                        {% if niveau_classe == "1" %}
+                                                                            selected
+                                                                        {% elif classe.niveau_classe == "1" %}
+                                                                        selected
+                                                                        {% endif %}>1er cycle</option>
+                                                                        <option value="2"
+                                                                        {% if niveau_classe == "2" %}
+                                                                            selected
+                                                                        {% elif classe.niveau_classe == "2" %}
+                                                                        selected
+                                                                        {% endif %}>2eme cycle</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <label class="col-3 col-lg-2 col-form-label  text-right" for="module">Modules
+                                                                </label>
+                                                                <div class="col-9 col-lg-10">
+                                                                    <select name="module" id="module" class="form-control" multiple>
+                                                                        {% for module in listModule %}
+                                                                            <option value=" {{module.id}}" 
+                                                                            {% if module in classe.module.all %}
+                                                                                selected
+                                                                            {% endif %}
+                                                                             >{{module.nom_module}}
+                                                                            </option>
+                                                                        {% empty %}
+                                                                            <option disabled> Pas de module</option>
+                                                                        {% endfor %}
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div style="float: right">
+    
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button class="btn btn-warning" type="submit"><i
+                                                                        class="fa fa-edit"></i> Modifier</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <a data-placement="top" data-toggle="modal"
+                                            data-target="#exampleModalCenterDelete{{ classe.id }}" title="Modifier la classe"
+                                            href="#" class="card-link">
+                                            <i data-content="Cette opération vous permet de supprimer la classe"
+                                                data-trigger="hover" data-toggle="popover"
+                                                data-original-title="Supprimer le classe" tabindex="0" title=""
+                                                class="fa fa-trash text-danger "></i>
+                                        </a>
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="exampleModalCenterDelete{{ classe.id }}"
+                                            tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+                                            aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLongTitle">Supprimer une classe
+                                                        </h5>
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                            aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <form action="{% url 'deleteClasse' %}" method="POST">
+                                                        {% csrf_token %}
+                                                        <div class="modal-body">
+    
+                                                            <input type="hidden" name="is_active"
+                                                                {% if classe.is_active == True %}
+                                                                    value="False"
+                                                                {% else %}
+                                                                    value="True"
+                                                                {% endif %}
+                                                                    >
+                                                            <input type="hidden" name="id" value="{{ classe.id }}">
+                                                          
+                                                            Confirmez-vous la suppression : <span
+                                                            class="badge badge-danger">{{ classe.codeClasse }}</span>
+                                                                
+    
+                                                        </div>
+                                                        <div class="modal-footer">
+
+                                                            <button class="btn btn-danger "
+                                                                style="float: right; margin: 1%;" type="submit"> <i
+                                                                    class="fa fa-close" aria-hidden="true"></i>
+                                                                <strong>Supprimer</strong></button>
+                                                                
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="6">
+                                        <center>
+                                            <h4>Pas de classe enregistrés </h4>
+                                        </center>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- ============================================================== -->
+        <!-- end striped table -->
+        <!-- ============================================================== -->
+    </div>
+                
+    <a data-toggle="modal" data-target="#exampleModalCenter" class="breadcrumb-item">
+        <button
+            data-content="Remplissez le formulaire en suivant les instructions demandées.... Tous les champs sont obligatoires"
+            data-trigger="hover" data-toggle="popover" data-original-title="Nouvelle classe" tabindex="0" title=""
+            class="site-action btn-raised btn btn-primary btn-floating" type="button">
+            <i class="fa fa-plus" aria-hidden="true"></i>
+        </button>
+    </a>
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Nouvelle classe</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="{% url 'listClasse' %}" method="post">
+                        {% csrf_token %}
+                        <div class="form-group row">
+                            <label for="codeClasse" class="col-3 col-lg-2 col-form-label text-right">code<span
+                                    class="required text-danger">*</span></label>
+                            <div class="col-9 col-lg-10">
+                                <input type="text" name="codeClasse" id="codeClasse" placeholder="code du classe"
+                                    value="{{ codeClasse }}" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="libelle_classe" class="col-3 col-lg-2 col-form-label text-right">libelle</label>
+                            <div class="col-9 col-lg-10">
+                                <input type="text" name="libelle_classe" id="libelle_classe" placeholder="libelle de la classe"
+                                    value="{{ libelle_classe }}" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-3 col-lg-2 col-form-label  text-right" for="prof_titulaire">Prof titulaire
+                            </label>
+                            <div class="col-9 col-lg-10">
+                                <select name="prof_titulaire" id="prof_titulaire" class="form-control">
+                                    <option></option>
+                                    {% for professeur in listProfesseur %}
+                                        <option value="{{professeur.id}}">{{professeur.professeurUser.nom}}
+                                        </option>
+                                    {% empty %}
+                                        <option disabled> Pas de professeur</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="niveau_classe" class="col-3 col-lg-2 col-form-label text-right">Cycle<span
+                                    class="required text-danger">*</span></label>
+                                    <div class="col-9 col-lg-10">
+                                        <select name="niveau_classe" id="niveau_classe" placeholder="niveau_classe de la classe"
+                                        class="form-control" required>
+                                            <option value="1"
+                                            {% if niveau_classe == "1" %}
+                                                selected
+                                            {% endif %}>1er cycle</option>
+                                            <option value="2"
+                                            {% if niveau_classe == "2" %}
+                                                selected
+                                            {% endif %}>2eme cycle</option>
+                                        </select>
+                                    </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-3 col-lg-2 col-form-label  text-right" for="module">Modules
+                            </label>
+                            <div class="col-9 col-lg-10">
+                                <select name="module" id="module" class="form-control" multiple>
+                                    {% for module in listModule %}
+                                        <option value="{{module.id}}">{{module.nom_module}}
+                                        </option>
+                                    {% empty %}
+                                        <option disabled> Pas de module</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div style="float: right;">
+                            <button type="submit" class="btn btn-primary">Enregistrer</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

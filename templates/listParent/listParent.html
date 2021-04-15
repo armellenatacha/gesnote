@@ -1,0 +1,297 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}
+    ListParent | GesNote
+{% endblock %}
+
+
+{% block content %}
+    <!-- ============================================================== -->
+    <!-- pageheader -->
+    <!-- ============================================================== -->
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="page-header">
+                <h2 class="pageheader-title">Liste des parents</h2>
+                <div class="page-breadcrumb">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'accueil' %}" class="breadcrumb-link">Accueil</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">ListParent</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- end pageheader -->
+    <!-- ============================================================== -->
+    <div class="row">
+        
+        <!-- ============================================================== -->
+        <!-- striped table -->
+        <!-- ============================================================== -->
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            
+            {% if msg %}
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
+                <div class="alert dark alert-alt alert-success alert-dismissible" id="success-alert" role="alert">
+                    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">×</span></button>
+                    <strong><i class="icon wb-check" aria-hidden="true"></i> Success! </strong> {{ msg }}
+                </div>
+            </div>
+            {% endif %}
+            {% if error %}
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
+                <div class="alert alert-danger" id="success-alert">
+                    <button type="button" class="close" data-dismiss="alert">x</button>
+                    <strong>Erreur! </strong> {{error}}
+                </div>
+            </div>
+            {% endif %}
+            <div class="card">
+                <h5 class="card-header">Liste des parents</h5>
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col">Nom</th>
+                                <th scope="col">Prenom</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">Contact</th>
+                                <th scope="col">actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for parent in listParent %}
+                                <tr>
+                                    <td>{{ parent.parentUser.nom }}</td>
+                                    <td>{{ parent.parentUser.prenom }}</td>
+                                    <td>{{ parent.parentUser.email }}</td>
+                                    <td>{{ parent.parentUser.telephone }}</td>
+                                    <td>
+                                        <a data-placement="top" data-toggle="modal"
+                                            data-target="#exampleModalCenterModifier{{ parent.id }}" title="Modifier le parent"
+                                            href="#" class="card-link">
+                                            <i data-content="Cette opération vous permet de modifier les informations du parent"
+                                                data-trigger="hover" data-toggle="popover"
+                                                data-original-title="Modifier le parent" tabindex="0" title=""
+                                                class="fa fa-edit text-warning "></i>
+                                        </a>
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="exampleModalCenterModifier{{ parent.id }}" tabindex="-1"
+                                            role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLongTitle">Modifier un parent
+                                                        </h5>
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                            aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form action="{% url 'updateParent' %}" method="POST">
+                                                            {% csrf_token %}
+                                                            <input type="hidden" name="idUser" value="{{ parent.parentUser.id }}">
+                                                            <input type="hidden" name="id" value="{{ parent.id }}">
+                                                            <div class="form-group row">
+                                                                <label for="nom" class="col-3 col-lg-2 col-form-label text-right">Nom<span
+                                                                        class="required text-danger">*</span></label>
+                                                                <div class="col-9 col-lg-10">
+                                                                    <input type="text" name="nom" id="nom" placeholder="Nom du parent"
+                                                                        {% if nom %}
+                                                                            value="{{ nom }}"
+                                                                        {% else %}
+                                                                            value="{{ parent.parentUser.nom }}"
+                                                                        {% endif %}
+                                                                        class="form-control" required>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <label for="prenom" class="col-3 col-lg-2 col-form-label text-right">Prenom</label>
+                                                                <div class="col-9 col-lg-10">
+                                                                    <input type="text" name="prenom" id="prenom" placeholder="Prenom du parent"
+                                                                    {% if nom %}
+                                                                        value="{{ prenom }}"
+                                                                    {% else %}
+                                                                        value="{{ parent.parentUser.prenom }}"
+                                                                    {% endif %}
+                                                                    class="form-control" required>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <label for="telephone" class="col-3 col-lg-2 col-form-label text-right">Telephone<span
+                                                                        class="required text-danger">*</span></label>
+                                                                <div class="col-9 col-lg-10">
+                                                                    <input type="tel" name="telephone" id="telephone" placeholder="telephone du parent"
+                                                                    {% if nom %}
+                                                                        value="{{ telephone }}"
+                                                                    {% else %}
+                                                                        value="{{ parent.parentUser.telephone }}"
+                                                                    {% endif %}
+                                                                    class="form-control" required>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <label for="email" class="col-3 col-lg-2 col-form-label text-right">Email<span
+                                                                        class="required text-danger">*</span></label>
+                                                                <div class="col-9 col-lg-10">
+                                                                    <input type="email" name="email" id="email" placeholder="email du parent"
+                                                                    {% if nom %}
+                                                                        value="{{ email }}"
+                                                                    {% else %}
+                                                                        value="{{ parent.parentUser.email }}"
+                                                                    {% endif %}
+                                                                    class="form-control" required>
+                                                                </div>
+                                                            </div>
+                                                            <div style="float: right">
+    
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button class="btn btn-warning" type="submit"><i
+                                                                        class="fa fa-edit"></i> Modifier</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <a data-placement="top" data-toggle="modal"
+                                            data-target="#exampleModalCenterDelete{{ parent.id }}" title="Modifier le parent"
+                                            href="#" class="card-link">
+                                            <i data-content="Cette opération vous permet de supprimer le parent"
+                                                data-trigger="hover" data-toggle="popover"
+                                                data-original-title="Supprimer le parent" tabindex="0" title=""
+                                                class="fa fa-trash text-danger "></i>
+                                        </a>
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="exampleModalCenterDelete{{ parent.id }}"
+                                            tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+                                            aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLongTitle">Supprimer un parent
+                                                        </h5>
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                            aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <form action="{% url 'deleteParent' %}" method="POST">
+                                                        {% csrf_token %}
+                                                        <div class="modal-body">
+    
+                                                            <input type="hidden" name="is_active"
+                                                                {% if parent.is_active == True %}
+                                                                    value="False"
+                                                                {% else %}
+                                                                    value="True"
+                                                                {% endif %}
+                                                                    >
+                                                            <input type="hidden" name="idUser" value="{{ parent.parentUser.id }}">
+                                                            <input type="hidden" name="id" value="{{ parent.id }}">
+                                                          
+                                                            Confirmez-vous la suppression : <span
+                                                            class="badge badge-danger">{{ parent.parentUser.nom }}</span>
+                                                                
+    
+                                                        </div>
+                                                        <div class="modal-footer">
+
+                                                            <button class="btn btn-danger "
+                                                                style="float: right; margin: 1%;" type="submit"> <i
+                                                                    class="fa fa-close" aria-hidden="true"></i>
+                                                                <strong>Supprimer</strong></button>
+                                                                
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="5">
+                                        <center>
+                                            <h4>Pas de parent enregistrés </h4>
+                                        </center>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- ============================================================== -->
+        <!-- end striped table -->
+        <!-- ============================================================== -->
+    </div>
+                
+    <a data-toggle="modal" data-target="#exampleModalCenter" class="breadcrumb-item">
+        <button
+            data-content="Remplissez le formulaire en suivant les instructions demandées.... Tous les champs sont obligatoires"
+            data-trigger="hover" data-toggle="popover" data-original-title="Nouveau parent" tabindex="0" title=""
+            class="site-action btn-raised btn btn-primary btn-floating" type="button">
+            <i class="fa fa-plus" aria-hidden="true"></i>
+        </button>
+    </a>
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Nouveau parent</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="{% url 'listParent' %}" method="post">
+                        {% csrf_token %}
+                        <div class="form-group row">
+                            <label for="nom" class="col-3 col-lg-2 col-form-label text-right">Nom<span
+                                    class="required text-danger">*</span></label>
+                            <div class="col-9 col-lg-10">
+                                <input type="text" name="nom" id="nom" placeholder="Nom du parent"
+                                    value="{{ nom }}" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="prenom" class="col-3 col-lg-2 col-form-label text-right">Prenom</label>
+                            <div class="col-9 col-lg-10">
+                                <input type="text" name="prenom" id="prenom" placeholder="Prenom du parent"
+                                    value="{{ prenom }}" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="telephone" class="col-3 col-lg-2 col-form-label text-right">Telephone<span
+                                    class="required text-danger">*</span></label>
+                            <div class="col-9 col-lg-10">
+                                <input type="tel" name="telephone" id="telephone" placeholder="telephone du parent"
+                                    value="{{ telephone }}" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="email" class="col-3 col-lg-2 col-form-label text-right">Email<span
+                                    class="required text-danger">*</span></label>
+                            <div class="col-9 col-lg-10">
+                                <input type="email" name="email" id="email" placeholder="email du parent"
+                                    value="{{ email }}" class="form-control" required>
+                            </div>
+                        </div>
+                        <div style="float: right;">
+                            <button type="submit" class="btn btn-primary">Enregistrer</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,418 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}
+    ListEleve | GesNote
+{% endblock %}
+
+
+{% block content %}
+    <!-- ============================================================== -->
+    <!-- pageheader -->
+    <!-- ============================================================== -->
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="page-header">
+                <h2 class="pageheader-title">Liste des élèves</h2>
+                <div class="page-breadcrumb">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'accueil' %}" class="breadcrumb-link">Accueil</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">ListEleve</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- end pageheader -->
+    <!-- ============================================================== -->
+    <div class="row">
+        
+        <!-- ============================================================== -->
+        <!-- striped table -->
+        <!-- ============================================================== -->
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            
+            {% if msg %}
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
+                <div class="alert dark alert-alt alert-success alert-dismissible" id="success-alert" role="alert">
+                    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">×</span></button>
+                    <strong><i class="icon wb-check" aria-hidden="true"></i> Success! </strong> {{ msg }}
+                </div>
+            </div>
+            {% endif %}
+            {% if error %}
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
+                <div class="alert alert-danger" id="success-alert">
+                    <button type="button" class="close" data-dismiss="alert">x</button>
+                    <strong>Erreur! </strong> {{error}}
+                </div>
+            </div>
+            {% endif %}
+            <div class="card">
+                <h5 class="card-header">Liste des élèves</h5>
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col">Nom</th>
+                                <th scope="col">Prenom</th>
+                                <th scope="col">Date de naissance</th>
+                                <th scope="col">Lieu de naissance</th>
+                                <th scope="col">sexe</th>
+                                <th scope="col">Parent</th>
+                                <th scope="col">Matricule</th>
+                                <th scope="col">Classe</th>
+                                <th scope="col">actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for eleve in listEleve %}
+                                <tr>
+                                    <td>{{ eleve.nom }}</td>
+                                    <td>{{ eleve.prenom }}</td>
+                                    <td>{{ eleve.date_naissance | date:'d/m/Y' }}</td>
+                                    <td>{{ eleve.lieu_naissance }}</td>
+                                    <td>{{ eleve.sexe }}</td>
+                                    <td>{{ eleve.parentEleve.parentUser.nom }}</td>
+                                    <td>{{ eleve.matricule }}</td>
+                                    <td>{{ eleve.classe.codeClasse }}</td>
+                                    <td>
+                                        <a data-placement="top" data-toggle="modal"
+                                            data-target="#exampleModalCenterModifier{{ eleve.id }}" title="Modifier l'eleve"
+                                            href="#" class="card-link">
+                                            <i data-content="Cette opération vous permet de modifier les informations de l'eleve"
+                                                data-trigger="hover" data-toggle="popover"
+                                                data-original-title="Modifier le eleve" tabindex="0" title=""
+                                                class="fa fa-edit text-warning "></i>
+                                        </a>
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="exampleModalCenterModifier{{ eleve.id }}" tabindex="-1"
+                                            role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLongTitle">Modifier un eleve
+                                                        </h5>
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                            aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form action="{% url 'updateEleve' %}" method="POST">
+                                                            {% csrf_token %}
+                                                            <input type="hidden" name="id" value="{{ eleve.id }}">
+                                                            <div class="form-group row">
+                                                                <label for="nom" class="col-3 col-lg-2 col-form-label text-right">Nom<span
+                                                                        class="required text-danger">*</span></label>
+                                                                <div class="col-9 col-lg-10">
+                                                                    <input type="text" name="nom" id="nom" placeholder="Nom de l'eleve"
+                                                                        {% if nom %}
+                                                                            value="{{ nom }}"
+                                                                        {% else %}
+                                                                            value="{{ eleve.nom }}"
+                                                                        {% endif %}
+                                                                        class="form-control" required>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <label for="prenom" class="col-3 col-lg-2 col-form-label text-right">Prenom</label>
+                                                                <div class="col-9 col-lg-10">
+                                                                    <input type="text" name="prenom" id="prenom" placeholder="Prenom de l'eleve"
+                                                                    {% if nom %}
+                                                                        value="{{ prenom }}"
+                                                                    {% else %}
+                                                                        value="{{ eleve.prenom }}"
+                                                                    {% endif %}
+                                                                    class="form-control" required>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <label for="matricule" class="col-3 col-lg-2 col-form-label text-right">Matricule</label>
+                                                                <div class="col-9 col-lg-10">
+                                                                    <input type="text" name="matricule" id="matricule" placeholder="Matricule de l'eleve"
+                                                                    {% if nom %}
+                                                                        value="{{ matricule }}"
+                                                                    {% else %}
+                                                                        value="{{ eleve.matricule }}"
+                                                                    {% endif %}
+                                                                    class="form-control" required>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <label for="sexe" class="col-3 col-lg-2 col-form-label text-right">Sexe</label>
+                                                                <div class="col-9 col-lg-10">
+                                                                    <select name="sexe" id="sexe" placeholder="Sexe de l'eleve" class="form-control" required>
+                                                                        <option></option>
+                                                                        <option value="masculin" 
+                                                                        {% if eleve.sexe == 'masculin' %}
+                                                                            selected
+                                                                        {% endif %}
+                                                                            >Masculin</option>
+                                                                        <option value="feminin" 
+                                                                        {% if eleve.sexe == 'feminin' %}
+                                                                            selected
+                                                                        {% endif %}
+                                                                            >Feminin</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <label class="col-3 col-lg-2 col-form-label  text-right" for="parent">Parent
+                                                                </label>
+                                                                <div class="col-9 col-lg-10">
+                                                                    <select name="parent" id="parent" class="form-control" >
+                                                                        {% for parent in listParent %}
+                                                                            <option value="{{parent.id}}" 
+                                                                            {% if parent.id == eleve.parent.id %}
+                                                                                selected
+                                                                            {% endif %}
+                                                                             >{{parent.parentUser.nom}} {{ parent.parentUser.prenom }}
+                                                                            </option>
+                                                                        {% empty %}
+                                                                            <option disabled> Pas de parent</option>
+                                                                        {% endfor %}
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <label class="col-3 col-lg-2 col-form-label  text-right" for="classe">Classe
+                                                                </label>
+                                                                <div class="col-9 col-lg-10">
+                                                                    <select name="classe" id="classe" class="form-control">
+                                                                        {% for classe in listClasse %}
+                                                                            <option value=" {{classe.id}}" 
+                                                                            {% if classe.id == eleve.classe.id %}
+                                                                                selected
+                                                                            {% endif %}
+                                                                             >{{classe.libelle_classe}}
+                                                                            </option>
+                                                                        {% empty %}
+                                                                            <option disabled> Pas de matière</option>
+                                                                        {% endfor %}
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <label for="date_naissance" class="col-3 col-lg-2 col-form-label text-right">Date de naissance<span
+                                                                        class="required text-danger">*</span></label>
+                                                                <div class="col-9 col-lg-10">
+                                                                    <input type="date" name="date_naissance" id="date_naissance" placeholder="date naissance de l'eleve"
+                                                                    {% if nom %}
+                                                                        value="{{ date_naissance }}"
+                                                                    {% else %}
+                                                                        value="{{ eleve.date_naissance }}"
+                                                                    {% endif %}
+                                                                    class="form-control" required>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <label for="lieu_naissance" class="col-3 col-lg-2 col-form-label text-right">Lieu de naissance<span
+                                                                        class="required text-danger">*</span></label>
+                                                                <div class="col-9 col-lg-10">
+                                                                    <input type="text" name="lieu_naissance" id="lieu_naissance" placeholder="lieu_naissance de l'eleve"
+                                                                    {% if nom %}
+                                                                        value="{{ lieu_naissance }}"
+                                                                    {% else %}
+                                                                        value="{{ eleve.lieu_naissance }}"
+                                                                    {% endif %}
+                                                                    class="form-control" required>
+                                                                </div>
+                                                            </div>
+                                                            <div style="float: right">
+    
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button class="btn btn-warning" type="submit"><i
+                                                                        class="fa fa-edit"></i> Modifier</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <a data-placement="top" data-toggle="modal"
+                                            data-target="#exampleModalCenterDelete{{ eleve.id }}" title="Supprimer l'eleve"
+                                            href="#" class="card-link">
+                                            <i data-content="Cette opération vous permet de supprimer l'eleve"
+                                                data-trigger="hover" data-toggle="popover"
+                                                data-original-title="Supprimer le eleve" tabindex="0" title=""
+                                                class="fa fa-trash text-danger "></i>
+                                        </a>
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="exampleModalCenterDelete{{ eleve.id }}"
+                                            tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+                                            aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLongTitle">Supprimer un eleve
+                                                        </h5>
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                            aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <form action="{% url 'deleteEleve' %}" method="POST">
+                                                        {% csrf_token %}
+                                                        <div class="modal-body">
+    
+                                                            <input type="hidden" name="is_active"
+                                                                {% if eleve.is_active == True %}
+                                                                    value="False"
+                                                                {% else %}
+                                                                    value="True"
+                                                                {% endif %}
+                                                                    >
+                                                            <input type="hidden" name="idUser" value="{{ eleve.id }}">
+                                                            <input type="hidden" name="id" value="{{ eleve.id }}">
+                                                          
+                                                            Confirmez-vous la suppression : <span
+                                                            class="badge badge-danger">{{ eleve.nom }}</span>
+                                                                
+    
+                                                        </div>
+                                                        <div class="modal-footer">
+
+                                                            <button class="btn btn-danger "
+                                                                style="float: right; margin: 1%;" type="submit"> <i
+                                                                    class="fa fa-close" aria-hidden="true"></i>
+                                                                <strong>Supprimer</strong></button>
+                                                                
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="8">
+                                        <center>
+                                            <h4>Pas d'eleve enregistrés </h4>
+                                        </center>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- ============================================================== -->
+        <!-- end striped table -->
+        <!-- ============================================================== -->
+    </div>
+                
+    <a data-toggle="modal" data-target="#exampleModalCenter" class="breadcrumb-item">
+        <button
+            data-content="Remplissez le formulaire en suivant les instructions demandées.... Tous les champs sont obligatoires"
+            data-trigger="hover" data-toggle="popover" data-original-title="Nouveau eleve" tabindex="0" title=""
+            class="site-action btn-raised btn btn-primary btn-floating" type="button">
+            <i class="fa fa-plus" aria-hidden="true"></i>
+        </button>
+    </a>
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Nouveau eleve</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="{% url 'listEleve' %}" method="post">
+                        {% csrf_token %}
+                        <div class="form-group row">
+                            <label for="nom" class="col-3 col-lg-2 col-form-label text-right">Nom<span
+                                    class="required text-danger">*</span></label>
+                            <div class="col-9 col-lg-10">
+                                <input type="text" name="nom" id="nom" placeholder="Nom de l'eleve"
+                                    value="{{ nom }}" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="prenom" class="col-3 col-lg-2 col-form-label text-right">Prenom</label>
+                            <div class="col-9 col-lg-10">
+                                <input type="text" name="prenom" id="prenom" placeholder="Prenom de l'eleve"
+                                    value="{{ prenom }}" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="matricule" class="col-3 col-lg-2 col-form-label text-right">Matricule</label>
+                            <div class="col-9 col-lg-10">
+                                <input type="text" name="matricule" id="matricule" placeholder="Matricule de l'eleve" 
+                                    value="{{ matricule }}" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="sexe" class="col-3 col-lg-2 col-form-label text-right">Sexe</label>
+                            <div class="col-9 col-lg-10">
+                                <select name="sexe" id="sexe" placeholder="Sexe de l'eleve" class="form-control" required>
+                                    <option></option>
+                                    <option value="masculin">Masculin</option>
+                                    <option value="feminin">Feminin</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-3 col-lg-2 col-form-label  text-right" for="parent">Parent
+                            </label>
+                            <div class="col-9 col-lg-10">
+                                <select name="parent" id="parent" class="form-control" required>
+                                    <option></option>
+                                    {% for parent in listParent %}
+                                        <option value="{{parent.id}}" 
+                                         >{{parent.parentUser.nom}} {{ parent.parentUser.prenom }}
+                                        </option>
+                                    {% empty %}
+                                        <option disabled> Pas de parent</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-3 col-lg-2 col-form-label  text-right" for="classe">Classe
+                            </label>
+                            <div class="col-9 col-lg-10">
+                                <select name="classe" id="classe" class="form-control">
+                                    {% for classe in listClasse %}
+                                        <option value=" {{classe.id}}" 
+                                         >{{classe.libelle_classe}}
+                                        </option>
+                                    {% empty %}
+                                        <option disabled> Pas de classe</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="date_naissance" class="col-3 col-lg-2 col-form-label text-right">Date naissance<span
+                                    class="required text-danger">*</span></label>
+                            <div class="col-9 col-lg-10">
+                                <input type="date" name="date_naissance" id="date_naissance" placeholder="date_naissance de l'eleve"
+                                    value="{{ date_naissance }}" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="lieu_naissance" class="col-3 col-lg-2 col-form-label text-right">Lieu de naissance<span
+                                    class="required text-danger">*</span></label>
+                            <div class="col-9 col-lg-10">
+                                <input type="lieu_naissance" name="lieu_naissance" id="lieu_naissance" placeholder="lieu_naissance de l'eleve"
+                                    value="{{ lieu_naissance }}" class="form-control" required>
+                            </div>
+                        </div>
+                        <div style="float: right;">
+                            <button type="submit" class="btn btn-primary">Enregistrer</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

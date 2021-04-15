@@ -1,0 +1,6 @@
+<option>------------------------</option>
+{% for matiere in matieres %}
+<option value="{{ matiere.id }}">{{ matiere.nom_Matiere }}</option>
+{% empty %}
+<option disabled>pas de matieres enregistrées pour cette classe </option>
+{% endfor %}

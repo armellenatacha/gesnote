@@ -1,0 +1,27 @@
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">Noms et Prenoms</th>
+            <th scope="col">Note</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for note in listNote %}
+            <tr>
+                <td>{{ note.eleve.nom }} {{ note.eleve.prenom }}</td>
+                <td>
+                    {{ note.codeNote }}
+                </td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="8">
+                    <center>
+                        <h4>Pas de note enregistrés </h4>
+                    </center>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

@@ -1,0 +1,6 @@
+<option>------------------------</option>
+{% for eleve in eleves %}
+<option value="{{ eleve.id }}">{{ eleve.nom }} {{ eleve.prenom }}</option>
+{% empty %}
+<option disabled>Vous n'êtes parent d'aucun élève dans cette classe </option>
+{% endfor %}

@@ -1,0 +1,35 @@
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">Noms et Prenoms</th>
+            <th scope="col">Note</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- <form action="{% url 'enregistrerNote' %}" method="post"> -->
+            {% csrf_token %}
+            <input type="hidden" name="sequence" id="sequence" value="{{ sequence }}">
+            <input type="hidden" name="classe" id="classe" value="{{ classe }}">
+            <input type="hidden" name="matiere" id="matiere" value="{{ matiere }}">
+            <button type="submit"  class="btn btn-primary">Enregistrer</button>
+            {% for eleve in listEleve %}
+                <tr>
+                    <td>{{ eleve.nom }} {{ eleve.prenom }}</td>
+                    <td>
+                        <input type="text" name="note" id="note">
+                        <input type="hidden" name="idEleve" id="idEleve" value="{{ eleve.id }}">
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="8">
+                        <center>
+                            <h4>Pas d'eleve enregistrés </h4>
+                        </center>
+                    </td>
+                </tr>
+            {% endfor %}
+        <!-- </form> -->
+    </tbody>
+</table>

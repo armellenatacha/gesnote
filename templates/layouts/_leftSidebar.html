@@ -1,0 +1,135 @@
+
+<div class="nav-left-sidebar sidebar-dark">
+    <div class="menu-list">
+        <nav class="navbar navbar-expand-lg navbar-light">
+            <a class="d-xl-none d-lg-none" href="#">Dashboard</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav flex-column">
+                    {% if user.parent == False %}
+                        <li class="nav-divider">
+                            Opérations
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'accueil' %}" data-toggle="collapse" aria-expanded="false" data-target="#submenu-1-2" aria-controls="submenu-1-2">Note</a>
+                            <div id="submenu-1-2" class="collapse submenu">
+                                <ul class="nav flex-column">
+                                    {% if user.professeur %}
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="{% url 'enregistrerNote' %}">Enregistrer note</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="{% url 'updateNote' %}">Modifier note</a>
+                                        </li>
+                                    {% endif %}
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{% url 'showNote' %}">Affichage note</a>
+                                    </li>
+                                    {% comment %} <li class="nav-item">
+                                        <a class="nav-link" href="{% url 'showBulletin' %}">Bulletin</a>
+                                    </li> {% endcomment %}
+                                </ul>
+                            </div>
+                        </li>
+                    {% endif %}
+                    <li class="nav-divider">
+                        Résultat
+                    </li>
+                    {% if user.parent == False %}
+                        <div class="nav-item">
+                            <a class="nav-link" href="{% url 'accueil' %}" data-toggle="collapse" aria-expanded="false" data-target="#submenu-1-3" aria-controls="submenu-1-2">Bulletin</a>
+                            <div id="submenu-1-3" class="collapse submenu">
+                                <ul class="nav flex-column">
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{% url 'listEleveBulSeq' %}">Bulletin sequentielle</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{% url 'listEleveBulTrim' %}">Bulletin trimestrielle</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if user.parent %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'showNoteParent' %}">Mon enfant</a>
+                        </li>
+                    {% endif %}
+                    
+                    {% if user.is_superuser or user.chefInformatique %}
+                        <li class="nav-divider">
+                            Paramètre
+                        </li>
+                        <div class="nav-item">
+                            <a class="nav-link" href="{% url 'accueil' %}" data-toggle="collapse" aria-expanded="false" data-target="#submenu" aria-controls="submenu-1-2">matière</a>
+                            <div id="submenu" class="collapse submenu">
+                                <ul class="nav flex-column">
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{% url 'listMatiere' %}">liste Matière</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{% url 'listCoefMatiereClasse' %}">Affecter coefficient matiere par classe</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="nav-item">
+                            <a class="nav-link" href="{% url 'accueil' %}" data-toggle="collapse" aria-expanded="false" data-target="#submenuAutre" aria-controls="submenu-1-2">Autre</a>
+                            <div id="submenuAutre" class="collapse submenu">
+                                <ul class="nav flex-column">
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{% url 'listModule' %}">Module</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{% url 'listClasse' %}">Classe</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{% url 'listSpecialite' %}">Specialite</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{% url 'listTrimestre' %}">Trimestre</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{% url 'listSequence' %}">Sequence</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'listEleve' %}">Eleve</a>
+                        </li>
+                    {% endif %}
+                    
+                    {% if user.is_superuser or user.chefInformatique %}  
+                    <li class="nav-divider">
+                        Utilisateur
+                    </li>
+                    <div class="nav-item">
+                        <a class="nav-link" href="{% url 'accueil' %}" data-toggle="collapse" aria-expanded="false" data-target="#submenu-1-4" aria-controls="submenu-1-2">Utilisateur</a>
+                        <div id="submenu-1-4" class="collapse submenu">
+                            <ul class="nav flex-column">
+                                {% if user.is_superuser %}
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'listChefInfo' %}">Chef informatique</a>
+                                </li>
+                                {% endif %}
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'listProfesseur' %}">Professeur</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'listPrincipal' %}">Principal</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'listParent' %}">Parent</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    {% endif %}
+                </ul>
+            </div>
+        </nav>
+    </div>
+</div>

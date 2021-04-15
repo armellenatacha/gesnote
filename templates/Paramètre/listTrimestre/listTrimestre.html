@@ -1,0 +1,228 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}
+    ListTrimestre | GesNote
+{% endblock %}
+
+
+{% block content %}
+    <!-- ============================================================== -->
+    <!-- pageheader -->
+    <!-- ============================================================== -->
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="page-header">
+                <h2 class="pageheader-title">Liste des trimestres </h2>
+                <div class="page-breadcrumb">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'accueil' %}" class="breadcrumb-link">Accueil</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">ListTrimestre</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- end pageheader -->
+    <!-- ============================================================== -->
+    <div class="row">
+        
+        <!-- ============================================================== -->
+        <!-- striped table -->
+        <!-- ============================================================== -->
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            
+            {% if msg %}
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
+                <div class="alert dark alert-alt alert-success alert-dismissible" id="success-alert" role="alert">
+                    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">×</span></button>
+                    <strong><i class="icon wb-check" aria-hidden="true"></i> Success! </strong> {{ msg }}
+                </div>
+            </div>
+            {% endif %}
+            {% if error %}
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
+                <div class="alert alert-danger" id="success-alert">
+                    <button type="button" class="close" data-dismiss="alert">x</button>
+                    <strong>Erreur! </strong> {{error}}
+                </div>
+            </div>
+            {% endif %}
+            <div class="card">
+                <h5 class="card-header">Liste des trimestres</h5>
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col">Numero</th>
+                                <th scope="col">actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for trimestre in listTrimestre %}
+                                <tr>
+                                    <td>{{ trimestre.numero_trimestre }}</td>
+                                    <td>
+                                        <a data-placement="top" data-toggle="modal"
+                                            data-target="#exampleModalCenterModifier{{ trimestre.id }}" title="Modifier le trimestre"
+                                            href="#" class="card-link">
+                                            <i data-content="Cette opération vous permet de modifier les informations d'un trimestre"
+                                                data-trigger="hover" data-toggle="popover"
+                                                data-original-title="Modifier le trimestre" tabindex="0" title=""
+                                                class="fa fa-edit text-warning "></i>
+                                        </a>
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="exampleModalCenterModifier{{ trimestre.id }}" tabindex="-1"
+                                            role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLongTitle">Modifier un trimestre
+                                                        </h5>
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                            aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form action="{% url 'updateTrimestre' %}" method="POST">
+                                                            {% csrf_token %}
+                                                            <input type="hidden" name="id" value="{{ trimestre.id }}">
+                                                            <div class="form-group row">
+                                                                <label for="numero_trimestre" class="col-3 col-lg-2 col-form-label text-right">numéro<span
+                                                                        class="required text-danger">*</span></label>
+                                                                <div class="col-9 col-lg-10">
+                                                                    <input type="number" name="numero_trimestre" id="numero_trimestre" placeholder="Numéro du trimestre"
+                                                                        {% if numero_trimestre %}
+                                                                            value="{{ numero_trimestre }}"
+                                                                        {% else %}
+                                                                            value="{{ trimestre.numero_trimestre }}"
+                                                                        {% endif %}
+                                                                        class="form-control" required>
+                                                                </div>
+                                                            </div>
+                                                            <div style="float: right">
+    
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button class="btn btn-warning" type="submit"><i
+                                                                        class="fa fa-edit"></i> Modifier</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <a data-placement="top" data-toggle="modal"
+                                            data-target="#exampleModalCenterDelete{{ trimestre.id }}" title="Supprimer le trimestre"
+                                            href="#" class="card-link">
+                                            <i data-content="Cette opération vous permet de supprimer le trimestre"
+                                                data-trigger="hover" data-toggle="popover"
+                                                data-original-title="Supprimer le trimestre" tabindex="0" title=""
+                                                class="fa fa-trash text-danger "></i>
+                                        </a>
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="exampleModalCenterDelete{{ trimestre.id }}"
+                                            tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+                                            aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLongTitle">Supprimer un trimestre
+                                                        </h5>
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                            aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <form action="{% url 'deleteTrimestre' %}" method="POST">
+                                                        {% csrf_token %}
+                                                        <div class="modal-body">
+    
+                                                            <input type="hidden" name="is_active"
+                                                                {% if trimestre.is_active == True %}
+                                                                    value="False"
+                                                                {% else %}
+                                                                    value="True"
+                                                                {% endif %}
+                                                                    >
+                                                            <input type="hidden" name="id" value="{{ trimestre.id }}">
+                                                          
+                                                            Confirmez-vous la suppression : <span
+                                                            class="badge badge-danger">{{ trimestre.numero_trimestre }}</span>
+                                                                
+    
+                                                        </div>
+                                                        <div class="modal-footer">
+
+                                                            <button class="btn btn-danger "
+                                                                style="float: right; margin: 1%;" type="submit"> <i
+                                                                    class="fa fa-close" aria-hidden="true"></i>
+                                                                <strong>Supprimer</strong></button>
+                                                                
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="4">
+                                        <center>
+                                            <h4>Pas de trimestre enregistrés </h4>
+                                        </center>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- ============================================================== -->
+        <!-- end striped table -->
+        <!-- ============================================================== -->
+    </div>
+                
+    <a data-toggle="modal" data-target="#exampleModalCenter" class="breadcrumb-item">
+        <button
+            data-content="Remplissez le formulaire en suivant les instructions demandées.... Tous les champs sont obligatoires"
+            data-trigger="hover" data-toggle="popover" data-original-title="Nouveaux trimestre" tabindex="0" title=""
+            class="site-action btn-raised btn btn-primary btn-floating" type="button">
+            <i class="fa fa-plus" aria-hidden="true"></i>
+        </button>
+    </a>
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Nouveau trimestre</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="{% url 'listTrimestre' %}" method="post">
+                        {% csrf_token %}
+                        <div class="form-group row">
+                            <label for="numero_trimestre" class="col-3 col-lg-2 col-form-label text-right">Numero<span
+                                    class="required text-danger">*</span></label>
+                            <div class="col-9 col-lg-10">
+                                <input type="number" name="numero_trimestre" id="numero_trimestre" placeholder="code du trimestre"
+                                    value="{{ numero_trimestre }}" class="form-control" required>
+                            </div>
+                        </div>
+                        <div style="float: right;">
+                            <button type="submit" class="btn btn-primary">Enregistrer</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

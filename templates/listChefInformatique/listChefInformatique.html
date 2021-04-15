@@ -1,0 +1,297 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}
+    ListChefInforamtique | GesNote
+{% endblock %}
+
+
+{% block content %}
+    <!-- ============================================================== -->
+    <!-- pageheader -->
+    <!-- ============================================================== -->
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="page-header">
+                <h2 class="pageheader-title">Liste des chefs informatiques </h2>
+                <div class="page-breadcrumb">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'accueil' %}" class="breadcrumb-link">Accueil</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">ListChefInformatique</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- end pageheader -->
+    <!-- ============================================================== -->
+    <div class="row">
+        
+        <!-- ============================================================== -->
+        <!-- striped table -->
+        <!-- ============================================================== -->
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            
+            {% if msg %}
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
+                <div class="alert dark alert-alt alert-success alert-dismissible" id="success-alert" role="alert">
+                    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">×</span></button>
+                    <strong><i class="icon wb-check" aria-hidden="true"></i> Success! </strong> {{ msg }}
+                </div>
+            </div>
+            {% endif %}
+            {% if error %}
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
+                <div class="alert alert-danger" id="success-alert">
+                    <button type="button" class="close" data-dismiss="alert">x</button>
+                    <strong>Erreur! </strong> {{error}}
+                </div>
+            </div>
+            {% endif %}
+            <div class="card">
+                <h5 class="card-header">Liste des chefs informatique</h5>
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col">Nom</th>
+                                <th scope="col">Prenom</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">Contact</th>
+                                <th scope="col">actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for chefInformatique in listChefInformatique %}
+                                <tr>
+                                    <td>{{ chefInformatique.chef_informatique.nom }}</td>
+                                    <td>{{ chefInformatique.chef_informatique.prenom }}</td>
+                                    <td>{{ chefInformatique.chef_informatique.email }}</td>
+                                    <td>{{ chefInformatique.chef_informatique.telephone }}</td>
+                                    <td>
+                                        <a data-placement="top" data-toggle="modal"
+                                            data-target="#exampleModalCenterModifier{{ chefInformatique.id }}" title="Modifier le chef informatique"
+                                            href="#" class="card-link">
+                                            <i data-content="Cette opération vous permet de modifier les informations du chef informatique"
+                                                data-trigger="hover" data-toggle="popover"
+                                                data-original-title="Modifier le chef informatique" tabindex="0" title=""
+                                                class="fa fa-edit text-warning "></i>
+                                        </a>
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="exampleModalCenterModifier{{ chefInformatique.id }}" tabindex="-1"
+                                            role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLongTitle">Modifier un chefInformatique
+                                                        </h5>
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                            aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form action="{% url 'updateChefInfo' %}" method="POST">
+                                                            {% csrf_token %}
+                                                            <input type="hidden" name="idUser" value="{{ chefInformatique.chef_informatique.id }}">
+                                                            <input type="hidden" name="id" value="{{ chefInformatique.id }}">
+                                                            <div class="form-group row">
+                                                                <label for="nom" class="col-3 col-lg-2 col-form-label text-right">Nom<span
+                                                                        class="required text-danger">*</span></label>
+                                                                <div class="col-9 col-lg-10">
+                                                                    <input type="text" name="nom" id="nom" placeholder="Nom du chef informatique"
+                                                                        {% if nom %}
+                                                                            value="{{ nom }}"
+                                                                        {% else %}
+                                                                            value="{{ chefInformatique.chef_informatique.nom }}"
+                                                                        {% endif %}
+                                                                        class="form-control" required>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <label for="prenom" class="col-3 col-lg-2 col-form-label text-right">Prenom</label>
+                                                                <div class="col-9 col-lg-10">
+                                                                    <input type="text" name="prenom" id="prenom" placeholder="Prenom du chef informatique"
+                                                                    {% if nom %}
+                                                                        value="{{ prenom }}"
+                                                                    {% else %}
+                                                                        value="{{ chefInformatique.chef_informatique.prenom }}"
+                                                                    {% endif %}
+                                                                    class="form-control" required>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <label for="telephone" class="col-3 col-lg-2 col-form-label text-right">Telephone<span
+                                                                        class="required text-danger">*</span></label>
+                                                                <div class="col-9 col-lg-10">
+                                                                    <input type="tel" name="telephone" id="telephone" placeholder="telephone du chef informatique"
+                                                                    {% if nom %}
+                                                                        value="{{ telephone }}"
+                                                                    {% else %}
+                                                                        value="{{ chefInformatique.chef_informatique.telephone }}"
+                                                                    {% endif %}
+                                                                    class="form-control" required>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <label for="email" class="col-3 col-lg-2 col-form-label text-right">Email<span
+                                                                        class="required text-danger">*</span></label>
+                                                                <div class="col-9 col-lg-10">
+                                                                    <input type="email" name="email" id="email" placeholder="email du chef informatique"
+                                                                    {% if nom %}
+                                                                        value="{{ email }}"
+                                                                    {% else %}
+                                                                        value="{{ chefInformatique.chef_informatique.email }}"
+                                                                    {% endif %}
+                                                                    class="form-control" required>
+                                                                </div>
+                                                            </div>
+                                                            <div style="float: right">
+    
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button class="btn btn-warning" type="submit"><i
+                                                                        class="fa fa-edit"></i> Modifier</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <a data-placement="top" data-toggle="modal"
+                                            data-target="#exampleModalCenterDelete{{ chefInformatique.id }}" title="Modifier le chefInformatique"
+                                            href="#" class="card-link">
+                                            <i data-content="Cette opération vous permet de supprimer le chef informatique"
+                                                data-trigger="hover" data-toggle="popover"
+                                                data-original-title="Supprimer le chef informatique" tabindex="0" title=""
+                                                class="fa fa-trash text-danger "></i>
+                                        </a>
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="exampleModalCenterDelete{{ chefInformatique.id }}"
+                                            tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+                                            aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLongTitle">Supprimer un chef informatique
+                                                        </h5>
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                            aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <form action="{% url 'deleteChefInfo' %}" method="POST">
+                                                        {% csrf_token %}
+                                                        <div class="modal-body">
+    
+                                                            <input type="hidden" name="is_active"
+                                                                {% if chefInformatique.is_active == True %}
+                                                                    value="False"
+                                                                {% else %}
+                                                                    value="True"
+                                                                {% endif %}
+                                                                    >
+                                                            <input type="hidden" name="idUser" value="{{ chefInformatique.chef_informatique.id }}">
+                                                            <input type="hidden" name="id" value="{{ chefInformatique.id }}">
+                                                          
+                                                            Confirmez-vous la suppression : <span
+                                                            class="badge badge-danger">{{ chefInformatique.chef_informatique.nom }}</span>
+                                                                
+    
+                                                        </div>
+                                                        <div class="modal-footer">
+
+                                                            <button class="btn btn-danger "
+                                                                style="float: right; margin: 1%;" type="submit"> <i
+                                                                    class="fa fa-close" aria-hidden="true"></i>
+                                                                <strong>Supprimer</strong></button>
+                                                                
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="5">
+                                        <center>
+                                            <h4>Pas de chef informatique enregistrés </h4>
+                                        </center>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- ============================================================== -->
+        <!-- end striped table -->
+        <!-- ============================================================== -->
+    </div>
+                
+    <a data-toggle="modal" data-target="#exampleModalCenter" class="breadcrumb-item">
+        <button
+            data-content="Remplissez le formulaire en suivant les instructions demandées.... Tous les champs sont obligatoires"
+            data-trigger="hover" data-toggle="popover" data-original-title="Nouveau Chef informatique" tabindex="0" title=""
+            class="site-action btn-raised btn btn-primary btn-floating" type="button">
+            <i class="fa fa-plus" aria-hidden="true"></i>
+        </button>
+    </a>
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Nouveau ChefInformatique</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="{% url 'listChefInfo' %}" method="post">
+                        {% csrf_token %}
+                        <div class="form-group row">
+                            <label for="nom" class="col-3 col-lg-2 col-form-label text-right">Nom<span
+                                    class="required text-danger">*</span></label>
+                            <div class="col-9 col-lg-10">
+                                <input type="text" name="nom" id="nom" placeholder="Nom du chef informatique"
+                                    value="{{ nom }}" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="prenom" class="col-3 col-lg-2 col-form-label text-right">Prenom</label>
+                            <div class="col-9 col-lg-10">
+                                <input type="text" name="prenom" id="prenom" placeholder="Prenom du chef informatique"
+                                    value="{{ prenom }}" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="telephone" class="col-3 col-lg-2 col-form-label text-right">Telephone<span
+                                    class="required text-danger">*</span></label>
+                            <div class="col-9 col-lg-10">
+                                <input type="tel" name="telephone" id="telephone" placeholder="telephone du chef informatique"
+                                    value="{{ telephone }}" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="email" class="col-3 col-lg-2 col-form-label text-right">Email<span
+                                    class="required text-danger">*</span></label>
+                            <div class="col-9 col-lg-10">
+                                <input type="email" name="email" id="email" placeholder="email du chef informatique"
+                                    value="{{ email }}" class="form-control" required>
+                            </div>
+                        </div>
+                        <div style="float: right;">
+                            <button type="submit" class="btn btn-primary">Enregistrer</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

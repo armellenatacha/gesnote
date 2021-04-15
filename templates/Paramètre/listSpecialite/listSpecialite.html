@@ -1,0 +1,292 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}
+    ListSpecialite | GesNote
+{% endblock %}
+
+
+{% block content %}
+    <!-- ============================================================== -->
+    <!-- pageheader -->
+    <!-- ============================================================== -->
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="page-header">
+                <h2 class="pageheader-title">Liste des specialités </h2>
+                <div class="page-breadcrumb">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'accueil' %}" class="breadcrumb-link">Accueil</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">ListSpecialite</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- end pageheader -->
+    <!-- ============================================================== -->
+    <div class="row">
+        
+        <!-- ============================================================== -->
+        <!-- striped table -->
+        <!-- ============================================================== -->
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            
+            {% if msg %}
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
+                <div class="alert dark alert-alt alert-success alert-dismissible" id="success-alert" role="alert">
+                    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">×</span></button>
+                    <strong><i class="icon wb-check" aria-hidden="true"></i> Success! </strong> {{ msg }}
+                </div>
+            </div>
+            {% endif %}
+            {% if error %}
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
+                <div class="alert alert-danger" id="success-alert">
+                    <button type="button" class="close" data-dismiss="alert">x</button>
+                    <strong>Erreur! </strong> {{error}}
+                </div>
+            </div>
+            {% endif %}
+            <div class="card">
+                <h5 class="card-header">Liste des specialités</h5>
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col">code</th>
+                                <th scope="col">Description</th>
+                                <th scope="col">Classe</th>
+                                <th scope="col">actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for specialite in listSpecialite %}
+                                <tr>
+                                    <td>{{ specialite.codeSpecialite.capitalize }}</td>
+                                    <td>{{ specialite.nom_Specialite.capitalize }}</td>
+                                    <td>
+                                        
+                                        {% for classe in specialite.classe.all %}
+                                            <span class="badge badge-primary"> {{ classe.codeClasse.capitalize }}</span>
+                                        {% empty %}
+                                            <span class="badge badge-warning"> Pas de classe</span>
+                                        {% endfor %}
+                                            
+                                    </td>
+                                    <td>
+                                        <a data-placement="top" data-toggle="modal"
+                                            data-target="#exampleModalCenterModifier{{ specialite.id }}" title="Modifier la specialite"
+                                            href="#" class="card-link">
+                                            <i data-content="Cette opération vous permet de modifier les informations d'une specialite"
+                                                data-trigger="hover" data-toggle="popover"
+                                                data-original-title="Modifier la specialite" tabindex="0" title=""
+                                                class="fa fa-edit text-warning "></i>
+                                        </a>
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="exampleModalCenterModifier{{ specialite.id }}" tabindex="-1"
+                                            role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLongTitle">Modifier une specialite
+                                                        </h5>
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                            aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form action="{% url 'updateSpecialite' %}" method="POST">
+                                                            {% csrf_token %}
+                                                            <input type="hidden" name="id" value="{{ specialite.id }}">
+                                                            <div class="form-group row">
+                                                                <label for="codeSpecialite" class="col-3 col-lg-2 col-form-label text-right">code<span
+                                                                        class="required text-danger">*</span></label>
+                                                                <div class="col-9 col-lg-10">
+                                                                    <input type="text" name="codeSpecialite" id="codeSpecialite" placeholder="code de la specialite"
+                                                                        {% if codeSpecialite %}
+                                                                            value="{{ codeSpecialite }}"
+                                                                        {% else %}
+                                                                            value="{{ specialite.codeSpecialite }}"
+                                                                        {% endif %}
+                                                                        class="form-control" required>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <label for="nom_Specialite" class="col-3 col-lg-2 col-form-label text-right">Description<span
+                                                                    class="required text-danger">*</span></label>
+                                                                <div class="col-9 col-lg-10">
+                                                                    <input type="text" name="nom_Specialite" id="nom_Specialite" placeholder="libelle de la specialite"
+                                                                    {% if nom_Specialite %}
+                                                                        value="{{ nom_Specialite }}"
+                                                                    {% else %}
+                                                                        value="{{ specialite.nom_Specialite }}"
+                                                                    {% endif %}
+                                                                    class="form-control" required>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <label class="col-3 col-lg-2 col-form-label  text-right" for="classe">Classe
+                                                                </label>
+                                                                <div class="col-9 col-lg-10">
+                                                                    <select name="classe" id="classe" class="form-control" multiple>
+                                                                        {% for classe in listClasse %}
+                                                                            <option value=" {{classe.id}}" 
+                                                                            {% if classe in specialite.classe.all %}
+                                                                                selected
+                                                                            {% endif %}
+                                                                             >{{classe.libelle_classe}}
+                                                                            </option>
+                                                                        {% empty %}
+                                                                            <option disabled> Pas de classe</option>
+                                                                        {% endfor %}
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div style="float: right">
+    
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button class="btn btn-warning" type="submit"><i
+                                                                        class="fa fa-edit"></i> Modifier</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <a data-placement="top" data-toggle="modal"
+                                            data-target="#exampleModalCenterDelete{{ specialite.id }}" title="Supprimer la specialite"
+                                            href="#" class="card-link">
+                                            <i data-content="Cette opération vous permet de supprimer la specialite"
+                                                data-trigger="hover" data-toggle="popover"
+                                                data-original-title="Supprimer le specialite" tabindex="0" title=""
+                                                class="fa fa-trash text-danger "></i>
+                                        </a>
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="exampleModalCenterDelete{{ specialite.id }}"
+                                            tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+                                            aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLongTitle">Supprimer une specialite
+                                                        </h5>
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                            aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <form action="{% url 'deleteSpecialite' %}" method="POST">
+                                                        {% csrf_token %}
+                                                        <div class="modal-body">
+    
+                                                            <input type="hidden" name="is_active"
+                                                                {% if specialite.is_active == True %}
+                                                                    value="False"
+                                                                {% else %}
+                                                                    value="True"
+                                                                {% endif %}
+                                                                    >
+                                                            <input type="hidden" name="id" value="{{ specialite.id }}">
+                                                          
+                                                            Confirmez-vous la suppression : <span
+                                                            class="badge badge-danger">{{ specialite.codeSpecialite.capitalize }}</span>
+                                                                
+    
+                                                        </div>
+                                                        <div class="modal-footer">
+
+                                                            <button class="btn btn-danger "
+                                                                style="float: right; margin: 1%;" type="submit"> <i
+                                                                    class="fa fa-close" aria-hidden="true"></i>
+                                                                <strong>Supprimer</strong></button>
+                                                                
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="4">
+                                        <center>
+                                            <h4>Pas de specialite enregistrés </h4>
+                                        </center>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- ============================================================== -->
+        <!-- end striped table -->
+        <!-- ============================================================== -->
+    </div>
+                
+    <a data-toggle="modal" data-target="#exampleModalCenter" class="breadcrumb-item">
+        <button
+            data-content="Remplissez le formulaire en suivant les instructions demandées.... Tous les champs sont obligatoires"
+            data-trigger="hover" data-toggle="popover" data-original-title="Nouvelle specialite" tabindex="0" title=""
+            class="site-action btn-raised btn btn-primary btn-floating" type="button">
+            <i class="fa fa-plus" aria-hidden="true"></i>
+        </button>
+    </a>
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Nouvelle specialite</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="{% url 'listSpecialite' %}" method="post">
+                        {% csrf_token %}
+                        <div class="form-group row">
+                            <label for="codeSpecialite" class="col-3 col-lg-2 col-form-label text-right">code<span
+                                    class="required text-danger">*</span></label>
+                            <div class="col-9 col-lg-10">
+                                <input type="text" name="codeSpecialite" id="codeSpecialite" placeholder="code du specialite"
+                                    value="{{ codeSpecialite }}" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="nom_Specialite" class="col-3 col-lg-2 col-form-label text-right">Description</label>
+                            <div class="col-9 col-lg-10">
+                                <input type="text" name="nom_Specialite" id="nom_Specialite" placeholder="libelle de la specialite"
+                                    value="{{ nom_Specialite }}" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-3 col-lg-2 col-form-label  text-right" for="classe">Classe
+                            </label>
+                            <div class="col-9 col-lg-10">
+                                <select name="classe" id="classe" class="form-control" multiple>
+                                    {% for classe in listClasse %}
+                                        <option value="{{classe.id}}">{{classe.libelle_classe}}
+                                        </option>
+                                    {% empty %}
+                                        <option disabled> Pas de classe</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div style="float: right;">
+                            <button type="submit" class="btn btn-primary">Enregistrer</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

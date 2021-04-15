@@ -1,0 +1,169 @@
+{% extends 'layouts/_bulletin.html' %}
+
+{% block title %}
+    Bulletin sequentiel | ColPozam
+{% endblock %}
+
+{% block content %}
+    <div class="row" style="margin-top: 3em;">
+        <div class="col text-center">
+            <h1>BULLETIN DE NOTES SEQUENCE {{ sequence.numero_sequence }} /2020-2021</h1>
+            <h2>{{ classe.codeClasse }}</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>NOMS ET PRENOMS</th>
+                            <th>{{ eleve.nom }} {{ eleve.prenom }}</th>
+                            <th>SEXE</th>
+                            <th>{{ eleve.sexe }}</th>
+                            <th colspan="3" class="text-center">EFFECTIF</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                        <tr>
+                            <th>DATE DE NAISSANCE</th>
+                            <th>{{ eleve.date_naissance | date:'d/m/Y' }}</th>
+                            <th>MATRICULE</th>
+                            <th>{{ eleve.matricule }}</th>
+                            <th>F</th>
+                            <th>G</th>
+                            <th>T</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                        <tr>
+                            <th>PROF TITULAIRE</th>
+                            <th>{{ classe.prof_titulaire.professeurUser.nom }} {{ classe.prof_titulaire.professeurUser.prenom }}</th>
+                            <th>REDOUBLANT</th>
+                            <th>N</th>
+                            <th>{{ f }}</th>
+                            <th>{{ g }}</th>
+                            <th>{{ t }}</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-center">
+                        <tr>
+                            <td rowspan="2"><strong>MATIERES</strong></td>
+                            <td colspan="4">SEQUENCE {{ sequence.numero_sequence }}</td>
+                            <td colspan="3">NOTE CLASSE</td>
+                            <td rowspan="2" colspan="2">ENSEIGNANT</td>
+                        </tr>
+                        <tr>
+                            <td>NOTE</td>
+                            <td>COEF</td>
+                            <td>N x C</td>
+                            <td>RANG</td>
+                            <td>MIN</td>
+                            <td>MOY</td>
+                            <td>MAX</td>
+                        </tr>
+                        {% for bulletin_module in table_modules %}
+                            {% for bulletin in tables %}
+                                {% if bulletin.module == bulletin_module.nom_module %}
+                                    <tr>
+                                        <td>{{ bulletin.matiere }}</td>
+                                        <td>{{ bulletin.note }}</td>
+                                        <td>{{ bulletin.coef }}</td>
+                                        <td>{{ bulletin.noteCoef }}</td>
+                                        <td>{{ bulletin.rang }}</td>
+                                        <td>{{ bulletin.min }}</td>
+                                        <td>{{ bulletin.moy }}</td>
+                                        <td>{{ bulletin.max }}</td>
+                                        <td colspan="2">{{ bulletin.prof }}</td>
+                                    </tr>
+                                {% endif %}
+                            {% endfor %}
+                            <tr>
+                                <th>Matières {{ bulletin_module.nom_module }}</th>
+                                <th>{{ bulletin_module.note }}</th>
+                                <th>{{ bulletin_module.coef }}</th>
+                                <th>{{ bulletin_module.noteCoef }}</th>
+                                <th>{{ bulletin_module.moy_module | floatformat:-2 }}</th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th colspan="2"></th>
+                            </tr>
+                        {% endfor %}
+                        <tr>
+                            {% comment %} <th colspan="2">RAPPELS MOYENNES</th> {% endcomment %}
+                            <th colspan="3">TRAVAIL SEQUENCE {{ sequence.numero_sequence }}</th>
+                            <th colspan="3">CONDUITES SEQUENCE {{ sequence.numero_sequence }}</th>
+                            <th colspan="4">CONSEIL DE CLASSE</th>
+                        </tr>
+                        <tr>
+                            {% comment %} <td>Trimestre 1</td>
+                            <td></td> {% endcomment %}
+                            <td colspan="2">TOTAL POINTS</td>
+                            <td>{{ total_point }}</td>
+                            <td colspan="2">ABS. TOTAL</td>
+                            <td></td>
+                            <td colspan="2">AVERT. TRAVAIL</td>
+                            <td colspan="2"></td>
+                        </tr>
+                        <tr>
+                            {% comment %} <td colspan="2">Trimestre 2</td>
+                            <td></td> {% endcomment %}
+                            <td colspan="2">TOTAL COEFS</td>
+                            <td>{{ total_coef }}</td>
+                            <td colspan="2">ABS. NON JUST</td>
+                            <td></td>
+                            <td colspan="2">BLAME TRAVAIL</td>
+                            <td colspan="2"></td>
+                        </tr>
+                        <tr>
+                            {% comment %} <td colspan="2">Trimestre 3</td>
+                            <td></td> {% endcomment %}
+                            <td colspan="2">MOY. SEQUENCE {{ sequence.numero_sequence }}</td>
+                            <td>{{ moy | floatformat:-2 }}</td>
+                            <td colspan="2">EXCLUSION(jrs.)</td>
+                            <td></td>
+                            <td colspan="2">TABLEAU D'HONNEUR</td>
+                            <td colspan="2">{{ tableau_honneur }}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">RANG SEQUENCE {{ sequence.numero_sequence }}</td>
+                            <td>{{ rang }}/{{ t }}</td>
+                            <td colspan="2">EXCLUSION(hrs.)</td>
+                            <td></td>
+                            <td colspan="2">ENCOURAGEMENT</td>
+                            <td colspan="2"></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">NBRE MATIERES</td>
+                            <td>{{ nbr_matiere }}</td>
+                            <td colspan="2">AVERT. CONDUITE</td>
+                            <td></td>
+                            <td colspan="2">FELICITATION</td>
+                            <td></td>
+                        </tr>
+                            <td colspan="2">MOY. CLASSE</td>
+                            <td>{{ moyClasse | floatformat:-2 }}</td>
+                            <td colspan="2">BLAME CONDUITE</td>
+                            <td></td>
+                            <td colspan="2"></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <th colspan="3">SIGNATURE DES PARENTS</th>
+                            <th colspan="5">OBSERVATIONS DU CONSEIL DE CLASSE</th>
+                            <th colspan="4">VISA DU CHEF D'ETABLISSEMENT</th>
+                        </tr>
+                        <tr>
+                            <th rowspan="5" colspan="3"></th>
+                            <th rowspan="5" colspan="5"></th>
+                            <th rowspan="5" colspan="4"></th>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

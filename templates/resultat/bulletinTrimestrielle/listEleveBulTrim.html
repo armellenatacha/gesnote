@@ -1,0 +1,105 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}
+    BulletinTrimestrielle | ColPozam
+{% endblock %}
+
+
+{% block content %}
+    <!-- ============================================================== -->
+    <!-- pageheader -->
+    <!-- ============================================================== -->
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="page-header">
+                <h2 class="pageheader-title">Bulletin trimestrielle</h2>
+                <div class="page-breadcrumb">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'accueil' %}" class="breadcrumb-link">Accueil</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">BulletinTrimestrielle</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- end pageheader -->
+    <!-- ============================================================== -->
+    <div class="row">
+        
+        <!-- ============================================================== -->
+        <!-- striped table -->
+        <!-- ============================================================== -->
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            
+            {% comment %} {% if msg %}
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
+                <div class="alert dark alert-alt alert-success alert-dismissible" id="success-alert" role="alert">
+                    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">×</span></button>
+                    <strong><i class="icon wb-check" aria-hidden="true"></i> Success! </strong> {{ msg }}
+                </div>
+            </div>
+            {% endif %}
+            {% if error %}
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
+                <div class="alert alert-danger" id="success-alert">
+                    <button type="button" class="close" data-dismiss="alert">x</button>
+                    <strong>Erreur! </strong> {{error}}
+                </div>
+            </div>
+            {% endif %} {% endcomment %}
+            <div class="card">
+                <h5 class="card-header">Liste des élèves</h5>
+                <div class="card-body">
+                    <form action="" method="post" id="form_1">
+                        {% csrf_token %}
+                        <div class="form-group row">
+                            <label class="col-3 col-lg-2 col-form-label  text-right" for="classe">Classe
+                            </label>
+                            <div class="col-9 col-lg-10">
+                                <select name="classe" id="classe" class="form-control" required>
+                                    <option></option>
+                                    {% for classe in listClasse %}
+                                        <option value="{{classe.id}}" 
+                                         >{{classe.codeClasse}} ==> {{ classe.libelle_classe }}
+                                        </option>
+                                    {% empty %}
+                                        <option disabled> Pas de classe</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        {% comment %} <div style="float: right;">
+                            <button type="submit" class="btn btn-primary">Continuer</button>
+                        </div> {% endcomment %}
+                    </form>
+                    <table class="table table-striped" id="eleveTable">
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- ============================================================== -->
+        <!-- end striped table -->
+        <!-- ============================================================== -->
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    <script>
+        $('#classe').change(function (e) {
+            let url = "  {% url 'get_list_eleve_trim' %} "  // get the url of the `load_cities` view
+            let classeId = $(this).val();  // get the selected country ID from the HTML input
+            $.ajax({                       // initialize an AJAX request
+                url: url,                    // set the url of the request (= localhost:8000/hr/ajax/load-cities/)
+                data: {
+                    'classe': classeId       // add the country id to the GET parameters
+                },
+                success: function (data) {   // `data` is the return of the `load_cities` view function
+                    $("#eleveTable").html(data);  // replace the contents of the city input with the data that came from the server
+                }
+            });
+        });
+    </script>
+{% endblock %}

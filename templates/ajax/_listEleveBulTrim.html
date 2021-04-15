@@ -1,0 +1,55 @@
+
+                        <thead>
+                            <tr>
+                                <th scope="col">Nom</th>
+                                <th scope="col">Prenom</th>
+                                <th scope="col">Matricule</th>
+                                <th scope="col">Classe</th>
+                                <th scope="col text-center">actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for eleve in listEleve %}
+                                <tr>
+                                    <td>{{ eleve.nom }}</td>
+                                    <td>{{ eleve.prenom }}</td>
+                                    <td>{{ eleve.matricule }}</td>
+                                    <td>{{ eleve.classe.codeClasse }}</td>
+                                    <td>
+                                        <form method="POST" action="{% url 'bulletinTrimestrielle' %}">
+                                            {% csrf_token %}
+                                            <div class="row">
+                                                <select name="idTrim" class="col form-control">
+                                                    <option value="1">trim 1</option>
+                                                    <option value="2">trim 2</option>
+                                                    <option value="3">trim 3</option>
+                                                </select>
+                                                <div class="col"></div>
+                                                <input type="hidden" name="idEleve" value="{{ eleve.id }}">
+                                                <input type="hidden" name="idClasse" value="{{ idClasse }}">
+                                                <button type="submit" class="col card-link">
+                                                    <i data-content="Afficher le bulletin trimestrielle"
+                                                        data-trigger="hover" data-toggle="popover"
+                                                        data-original-title="Afficher le bulletin trimestrielle" tabindex="0" title=""
+                                                        class="fa fa-file text-warning ">1</i>
+                                                </button>
+                                            </div>
+                                        </form>
+                                        <!-- <a href="#" class="card-link">
+                                            <i data-content="Afficher le bulletin de la sequence 1"
+                                                data-trigger="hover" data-toggle="popover"
+                                                data-original-title="Afficher le bulletin de la sequence 1" tabindex="0" title=""
+                                                class="fa fa-file text-warning ">1</i>
+                                        </a> -->
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="8">
+                                        <center>
+                                            <h4>Pas d'eleve enregistrés </h4>
+                                        </center>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>

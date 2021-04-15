@@ -1,0 +1,299 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}
+    AffecterCoefMatiereClasse | GesNote
+{% endblock %}
+
+
+{% block content %}
+    <!-- ============================================================== -->
+    <!-- pageheader -->
+    <!-- ============================================================== -->
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="page-header">
+                <h2 class="pageheader-title">Liste des coefficient des matières par classe </h2>
+                <div class="page-breadcrumb">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'accueil' %}" class="breadcrumb-link">Accueil</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">AffecterCoefMatiereClasse</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- end pageheader -->
+    <!-- ============================================================== -->
+    <div class="row">
+        
+        <!-- ============================================================== -->
+        <!-- striped table -->
+        <!-- ============================================================== -->
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            
+            {% if msg %}
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
+                <div class="alert dark alert-alt alert-success alert-dismissible" id="success-alert" role="alert">
+                    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">×</span></button>
+                    <strong><i class="icon wb-check" aria-hidden="true"></i> Success! </strong> {{ msg }}
+                </div>
+            </div>
+            {% endif %}
+            {% if error %}
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
+                <div class="alert alert-danger" id="success-alert">
+                    <button type="button" class="close" data-dismiss="alert">x</button>
+                    <strong>Erreur! </strong> {{error}}
+                </div>
+            </div>
+            {% endif %}
+            <div class="card">
+                <h5 class="card-header">Liste des coefficient des matières par classe</h5>
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col">Classe</th>
+                                <th scope="col">Matière</th>
+                                <th scope="col">Coefficient</th>
+                                <th scope="col">actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for coefMatiereClasse in listCoefMatiereClasse %}
+                                <tr>
+                                    <td>{{ coefMatiereClasse.classe_m.codeClasse }}</td>
+                                    <td>{{ coefMatiereClasse.matiere_c.codeMatiere }}</td>
+                                    <td>{{ coefMatiereClasse.coefficient_Matiere }}</td>
+                                    <td>
+                                        <a data-placement="top" data-toggle="modal"
+                                            data-target="#exampleModalCenterModifier{{ coefMatiereClasse.id }}" title="Modifier le coefficient"
+                                            href="#" class="card-link">
+                                            <i data-content="Cette opération vous permet de modifier les informations du coefficient"
+                                                data-trigger="hover" data-toggle="popover"
+                                                data-original-title="Modifier le coefficient" tabindex="0" title=""
+                                                class="fa fa-edit text-warning "></i>
+                                        </a>
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="exampleModalCenterModifier{{ coefMatiereClasse.id }}" tabindex="-1"
+                                            role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLongTitle">Modifier un coefficient
+                                                        </h5>
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                            aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form action="{% url 'updateCoefMatiereClasse' %}" method="POST">
+                                                            {% csrf_token %}
+                                                            <input type="hidden" name="id" value="{{ coefMatiereClasse.id }}">
+                                                            <div class="form-group row">
+                                                                <label class="col-3 col-lg-2 col-form-label  text-right" for="matiere">Classe
+                                                                </label>
+                                                                <div class="col-9 col-lg-10">
+                                                                    <select name="classe" id="classe" class="form-control">
+                                                                        {% for classe in listClasse %}
+                                                                            <option value=" {{classe.id}}" 
+                                                                            {% if classe.id == coefMatiereClasse.classe_m.id %}
+                                                                                selected
+                                                                            {% endif %}
+                                                                             >{{classe.libelle_classe}}
+                                                                            </option>
+                                                                        {% empty %}
+                                                                            <option disabled> Pas de classe</option>
+                                                                        {% endfor %}
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <label class="col-3 col-lg-2 col-form-label  text-right" for="matiere">Matière
+                                                                </label>
+                                                                <div class="col-9 col-lg-10">
+                                                                    <select name="matiere" id="matiere" class="form-control">
+                                                                        {% for matiere in listMatiere %}
+                                                                            <option value=" {{matiere.id}}" 
+                                                                            {% if matiere == coefMatiereClasse.matiere_c.id %}
+                                                                                selected
+                                                                            {% endif %}
+                                                                             >{{matiere.nom_Matiere}}
+                                                                            </option>
+                                                                        {% empty %}
+                                                                            <option disabled> Pas de matière</option>
+                                                                        {% endfor %}
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <label for="coefficient_Matiere" class="col-3 col-lg-2 col-form-label text-right">Coefficient<span
+                                                                        class="required text-danger">*</span></label>
+                                                                <div class="col-9 col-lg-10">
+                                                                    <input type="text" name="coefficient_Matiere" id="coefficient_Matiere" placeholder="coefficient de la Matiere"
+                                                                        value="{{ coefMatiereClasse.coefficient_Matiere }}" class="form-control" required>
+                                                                </div>
+                                                            </div>
+                                                            <div style="float: right">
+    
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button class="btn btn-warning" type="submit"><i
+                                                                        class="fa fa-edit"></i> Modifier</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <a data-placement="top" data-toggle="modal"
+                                            data-target="#exampleModalCenterDelete{{ coefMatiereClasse.id }}" title="Modifier le coefficient"
+                                            href="#" class="card-link">
+                                            <i data-content="Cette opération vous permet de supprimer le coefficient"
+                                                data-trigger="hover" data-toggle="popover"
+                                                data-original-title="Supprimer le coefMatiereClasse" tabindex="0" title=""
+                                                class="fa fa-trash text-danger "></i>
+                                        </a>
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="exampleModalCenterDelete{{ coefMatiereClasse.id }}"
+                                            tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+                                            aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLongTitle">Supprimer un coefficient
+                                                        </h5>
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                            aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <form action="{% url 'deleteCoefMatiereClasse' %}" method="POST">
+                                                        {% csrf_token %}
+                                                        <div class="modal-body">
+    
+                                                            <input type="hidden" name="is_active"
+                                                                {% if coefMatiereClasse.is_active == True %}
+                                                                    value="False"
+                                                                {% else %}
+                                                                    value="True"
+                                                                {% endif %}
+                                                                    >
+                                                            <input type="hidden" name="id" value="{{ coefMatiereClasse.id }}">
+                                                          
+                                                            Confirmez-vous la suppression : <span
+                                                            class="badge badge-danger">{{ coefMatiereClasse.coefficient_Matiere }}</span>
+                                                                
+    
+                                                        </div>
+                                                        <div class="modal-footer">
+
+                                                            <button class="btn btn-danger "
+                                                                style="float: right; margin: 1%;" type="submit"> <i
+                                                                    class="fa fa-close" aria-hidden="true"></i>
+                                                                <strong>Supprimer</strong></button>
+                                                                
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="4">
+                                        <center>
+                                            <h4>Pas de coefficient_Matiere enregistrés </h4>
+                                        </center>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- ============================================================== -->
+        <!-- end striped table -->
+        <!-- ============================================================== -->
+    </div>
+                
+    <a data-toggle="modal" data-target="#exampleModalCenter" class="breadcrumb-item">
+        <button
+            data-content="Remplissez le formulaire en suivant les instructions demandées.... Tous les champs sont obligatoires"
+            data-trigger="hover" data-toggle="popover" data-original-title="Nouveau coefMatiereClasse" tabindex="0" title=""
+            class="site-action btn-raised btn btn-primary btn-floating" type="button">
+            <i class="fa fa-plus" aria-hidden="true"></i>
+        </button>
+    </a>
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Nouveau coefficient_Matiere</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="{% url 'listCoefMatiereClasse' %}" method="post">
+                        {% csrf_token %}
+                        <div class="form-group row">
+                            <label class="col-3 col-lg-2 col-form-label  text-right" for="matiere">Classe
+                            </label>
+                            <div class="col-9 col-lg-10">
+                                <select name="classe" id="classe" class="form-control">
+                                    {% for classe in listClasse %}
+                                        <option value=" {{classe.id}}" 
+                                        {% if classe.id == classe %}
+                                            selected
+                                        {% endif %}
+                                            >{{classe.codeClasse}}
+                                        </option>
+                                    {% empty %}
+                                        <option disabled> Pas de classe</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-3 col-lg-2 col-form-label  text-right" for="matiere">Matière
+                            </label>
+                            <div class="col-9 col-lg-10">
+                                <select name="matiere" id="matiere" class="form-control">
+                                    {% for matiere in listMatiere %}
+                                        <option value=" {{matiere.id}}" 
+                                        {% if matiere.id == matiere %}
+                                            selected
+                                        {% endif %}
+                                            >{{matiere.nom_Matiere}}
+                                        </option>
+                                    {% empty %}
+                                        <option disabled> Pas de matière</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="coefficient_Matiere" class="col-3 col-lg-2 col-form-label text-right">Coefficient<span
+                                    class="required text-danger">*</span></label>
+                            <div class="col-9 col-lg-10">
+                                <input type="text" name="coefficient_Matiere" id="coefficient_Matiere" placeholder="coefficient de la Matiere"
+                                    value="{{ coefficient_Matiere }}" class="form-control" required>
+                            </div>
+                        </div>
+                        <div style="float: right;">
+                            <button type="submit" class="btn btn-primary">Enregistrer</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

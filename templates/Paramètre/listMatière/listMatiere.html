@@ -1,0 +1,328 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}
+    ListMatière | GesNote
+{% endblock %}
+
+
+{% block content %}
+    <!-- ============================================================== -->
+    <!-- pageheader -->
+    <!-- ============================================================== -->
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="page-header">
+                <h2 class="pageheader-title">Liste des matières</h2>
+                <div class="page-breadcrumb">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'accueil' %}" class="breadcrumb-link">Accueil</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">ListMatière</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- end pageheader -->
+    <!-- ============================================================== -->
+    <div class="row">
+        
+        <!-- ============================================================== -->
+        <!-- striped table -->
+        <!-- ============================================================== -->
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            
+            {% if msg %}
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
+                <div class="alert dark alert-alt alert-success alert-dismissible" id="success-alert" role="alert">
+                    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">×</span></button>
+                    <strong><i class="icon wb-check" aria-hidden="true"></i> Success! </strong> {{ msg }}
+                </div>
+            </div>
+            {% endif %}
+            {% if error %}
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
+                <div class="alert alert-danger" id="success-alert">
+                    <button type="button" class="close" data-dismiss="alert">x</button>
+                    <strong>Erreur! </strong> {{error}}
+                </div>
+            </div>
+            {% endif %}
+            <div class="card">
+                <h5 class="card-header">Liste des matières</h5>
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col">Code</th>
+                                <th scope="col">libelle</th>
+                                <th scope="col">Module</th>
+                                <th scope="col">Classes</th>
+                                <th scope="col">actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for matiere in listMatiere %}
+                                <tr>
+                                    <td>{{ matiere.codeMatiere.capitalize }}</td>
+                                    <td>{{ matiere.nom_Matiere.capitalize }}</td>
+                                    <td>{{ matiere.module.nom_module }}</td>
+                                    <td>
+                                        
+                                        {% for classe in matiere.classeM.all %}
+                                            <span class="badge badge-primary"> {{ classe.codeClasse.capitalize }}</span>
+                                        {% empty %}
+                                            <span class="badge badge-warning"> Pas de classe</span>
+                                        {% endfor %}
+                                            
+                                    </td>
+                                    <td>
+                                        <a data-placement="top" data-toggle="modal"
+                                            data-target="#exampleModalCenterModifier{{ matiere.id }}" title="Modifier la matiere"
+                                            href="#" class="card-link">
+                                            <i data-content="Cette opération vous permet de modifier les informations du matiere"
+                                                data-trigger="hover" data-toggle="popover"
+                                                data-original-title="Modifier la matiere" tabindex="0" title=""
+                                                class="fa fa-edit text-warning "></i>
+                                        </a>
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="exampleModalCenterModifier{{ matiere.id }}" tabindex="-1"
+                                            role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLongTitle">Modifier une matiere
+                                                        </h5>
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                            aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form action="{% url 'updateMatiere' %}" method="POST">
+                                                            {% csrf_token %}
+                                                            <input type="hidden" name="id" value="{{ matiere.id }}">
+                                                            <div class="form-group row">
+                                                                <label for="codeMatiere" class="col-3 col-lg-2 col-form-label text-right">Code matière<span
+                                                                        class="required text-danger">*</span></label>
+                                                                <div class="col-9 col-lg-10">
+                                                                    <input type="text" name="codeMatiere" id="codeMatiere" placeholder="Code de la matiere"
+                                                                        {% if codeMatiere %}
+                                                                            value="{{ codeMatiere }}"
+                                                                        {% else %}
+                                                                            value="{{ matiere.codeMatiere }}"
+                                                                        {% endif %}
+                                                                        class="form-control" required>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <label for="nom_Matiere" class="col-3 col-lg-2 col-form-label text-right">Libelle</label>
+                                                                <div class="col-9 col-lg-10">
+                                                                    <input type="text" name="nom_Matiere" id="nom_Matiere" placeholder="libelle de la matiere"
+                                                                    {% if codeMatiere %}
+                                                                        value="{{ nom_Matiere }}"
+                                                                    {% else %}
+                                                                        value="{{ matiere.nom_Matiere }}"
+                                                                    {% endif %}
+                                                                    class="form-control" required>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <label class="col-3 col-lg-2 col-form-label  text-right" for="module">Module
+                                                                </label>
+                                                                <div class="col-9 col-lg-10">
+                                                                    <select name="module" id="module" class="form-control" >
+                                                                        {% for module in listModule %}
+                                                                            <option value="{{module.id}}" 
+                                                                            {% if module.id == matiere.module.id %}
+                                                                                selected
+                                                                            {% endif %}
+                                                                             >{{module.nom_module}}
+                                                                            </option>
+                                                                        {% empty %}
+                                                                            <option disabled> Pas de module</option>
+                                                                        {% endfor %}
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <label class="col-3 col-lg-2 col-form-label  text-right" for="classe">Classe
+                                                                </label>
+                                                                <div class="col-9 col-lg-10">
+                                                                    <select name="classe" id="classe" class="form-control" multiple>
+                                                                        {% for classe in listClasse %}
+                                                                            <option value=" {{classe.id}}" 
+                                                                            {% if classe in matiere.classeM.all %}
+                                                                                selected
+                                                                            {% endif %}
+                                                                             >{{classe.codeClasse}}
+                                                                            </option>
+                                                                        {% empty %}
+                                                                            <option disabled> Pas de classe</option>
+                                                                        {% endfor %}
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div style="float: right">
+    
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button class="btn btn-warning" type="submit"><i
+                                                                        class="fa fa-edit"></i> Modifier</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <a data-placement="top" data-toggle="modal"
+                                            data-target="#exampleModalCenterDelete{{ matiere.id }}" title="Supprimer une matiere"
+                                            href="#" class="card-link">
+                                            <i data-content="Cette opération vous permet de supprimer une matiere"
+                                                data-trigger="hover" data-toggle="popover"
+                                                data-original-title="Supprimer une matiere" tabindex="0" title=""
+                                                class="fa fa-trash text-danger "></i>
+                                        </a>
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="exampleModalCenterDelete{{ matiere.id }}"
+                                            tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+                                            aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLongTitle">Supprimer une matiere
+                                                        </h5>
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                            aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <form action="{% url 'deleteMatiere' %}" method="POST">
+                                                        {% csrf_token %}
+                                                        <div class="modal-body">
+    
+                                                            <input type="hidden" name="is_active"
+                                                                {% if matiere.is_active == True %}
+                                                                    value="False"
+                                                                {% else %}
+                                                                    value="True"
+                                                                {% endif %}
+                                                                    >
+                                                            <input type="hidden" name="id" value="{{ matiere.id }}">
+                                                          
+                                                            Confirmez-vous la suppression : <span
+                                                            class="badge badge-danger">{{ matiere.codeMatiere }}</span>
+                                                                
+    
+                                                        </div>
+                                                        <div class="modal-footer">
+
+                                                            <button class="btn btn-danger "
+                                                                style="float: right; margin: 1%;" type="submit"> <i
+                                                                    class="fa fa-close" aria-hidden="true"></i>
+                                                                <strong>Supprimer</strong></button>
+                                                                
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="5">
+                                        <center>
+                                            <h4>Pas de matière enregistrés </h4>
+                                        </center>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- ============================================================== -->
+        <!-- end striped table -->
+        <!-- ============================================================== -->
+    </div>
+                
+    <a data-toggle="modal" data-target="#exampleModalCenter" class="breadcrumb-item">
+        <button
+            data-content="Remplissez le formulaire en suivant les instructions demandées.... Tous les champs sont obligatoires"
+            data-trigger="hover" data-toggle="popover" data-original-title="Nouvelle matiere" tabindex="0" title=""
+            class="site-action btn-raised btn btn-primary btn-floating" type="button">
+            <i class="fa fa-plus" aria-hidden="true"></i>
+        </button>
+    </a>
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Nouvelle matiere</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="{% url 'listMatiere' %}" method="post">
+                        {% csrf_token %}
+                        <div class="form-group row">
+                            <label for="codeMatiere" class="col-3 col-lg-2 col-form-label text-right">Code matière<span
+                                    class="required text-danger">*</span></label>
+                            <div class="col-9 col-lg-10">
+                                <input type="text" name="codeMatiere" id="codeMatiere" placeholder="Nom de la matiere"
+                                    value="{{ codeMatiere }}" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="nom_Matiere" class="col-3 col-lg-2 col-form-label text-right">Libelle</label>
+                            <div class="col-9 col-lg-10">
+                                <input type="text" name="nom_Matiere" id="nom_Matiere" placeholder="libelle de la matiere"
+                                    value="{{ nom_Matiere }}" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-3 col-lg-2 col-form-label  text-right" for="module">Module
+                            </label>
+                            <div class="col-9 col-lg-10">
+                                <select name="module" id="module" class="form-control" required>
+                                    <option></option>
+                                    {% for module in listModule %}
+                                        <option value="{{module.id}}" 
+                                         >{{module.nom_module}}
+                                        </option>
+                                    {% empty %}
+                                        <option disabled> Pas de module</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-3 col-lg-2 col-form-label  text-right" for="classe">Classe
+                            </label>
+                            <div class="col-9 col-lg-10">
+                                <select name="classe" id="classe" class="form-control" multiple>
+                                    {% for classe in listClasse %}
+                                        <option value=" {{classe.id}}"
+                                         >{{classe.codeClasse}}
+                                        </option>
+                                    {% empty %}
+                                        <option disabled> Pas de classe</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div style="float: right;">
+                            <button type="submit" class="btn btn-primary">Enregistrer</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,27 @@
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">Matières</th>
+            <th scope="col">Note</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for note in listNote %}
+            <tr>
+                <td>{{ note.matiere.nom_Matiere }}</td>
+                <td>
+                    {{ note.codeNote }}
+                </td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="8">
+                    <center>
+                        <h4>Les notes ne sont pas encore disponible </h4>
+                    </center>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
