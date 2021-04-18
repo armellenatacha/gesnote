@@ -35,7 +35,7 @@ if os.environ.get('ENV') == 'PRODUCTION' or os.environ.get('ENV') == 'STAGING':
 else:
     DEBUG = True
 
-ALLOWED_HOSTS = ['colpozam.herokuapp.com', '127.0.0.1', 'gesnote.herokuapp.com']
+ALLOWED_HOSTS = ['colpozam.herokuapp.com', '127.0.0.1', 'gesnote.herokuapp.com','gesnote-staging.herokuapp.com']
 
 
 # Application definition
